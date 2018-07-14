@@ -1,0 +1,341 @@
+第四阶段：人工智能
+数据分析
+机器学习，基于历史预测未来
+       深度学习
+              强化学习
+一、numpy，Numerical Python，数值的Python
+1.科学计算的算法库：解方程、求积分、线性代数；
+2.高性能算法的集大成者；
+3.几乎是所有高级算法库的基础库；
+   scipy  scikits  pandas  matplotlib
+           \       |            |       /
+                     numpy
+4.开源，免费。
+代码：vec.py
+5.数组的通用性和灵活性不及python中的内置容器。
+二、numpy基础
+1.数组对象
+1)numpy中ndarray是一个类，其实例化对象就是数组。
+实际数据：数组元素的真实数据；
+元数据：描述数组的结构、类型等特征的数据。
+凡是通过元数据可以实现的功能，都会避免使用实际数据，借此提高效率。
+1 2 3 4 5 6
+1
+2, 3
+3, 2
+2)numpy数组的元素必须是相同类型(同质)的。
+3)numpy数组的元素可以通过从0开始的下标访问。
+大小n，合理下标范围：0~n-1
+4)可以通过shape/dtype属性访问有关维度和元素类型的元数据。
+5)可以通过以下两种方式创建数组对象：
+numpy.arange()：以数组形式返回一个有序序列。
+numpy.array()：将任意类型的容器转换成数组。
+代码：shape.py
+2.多维数组
+1)numpy.array()函数可以根据给定的容器对象创建与之维度相当的数组对象。所给定的容器可以是列表、元组或者任何类似的容器。
+2)对于N维数组，通过其dtype属性所获得的并非N-1维数组，而是最终数据元素的类型。
+3)对于N维数组，len()函数所返回的仅仅是第一维的大小，而数组中元素的总数需要通过数组对象的size属性获得。
+4)数组的维度和元素的类型可以在对象创建之后进行修改：
+reshape()/astype()，这里所说修改并非就地修改，而是返回副本。
+代码：nd.py
+3.元素索引
+数组对象[...]...[页][行][列]
+数组对象[..., 页, 行, 列]
+代码：index.py
+4.定制类型
+np.array(..., dtype=元素类型)
+np.arange(起始，终止，步长).astype(元素类型)
+代码：dtype.py
+类型字符码
+? - 布尔型(bool/numpy.boolean/numpy.bool_)
+b - byte/numpy.int8
+B - unsigned byte/numpy.uint8
+i - numpy.intXX
+u - numpy.uintXX
+f - numpy.floatXX
+c - numpy.complexXX
+m - numpy.timedelta
+M -  numpy.datetime
+        M[D]，以天为单位
+O - python对象
+U - numpy.str_，UNICODE字符串
+S -  MBCS字符串
+5.切片
+[起始:终止:步长, ...]
+缺省起始：首或尾
+缺省终止：尾后/首前
+缺省步长：1
+如果连续的多个维度切片都用缺省值，可以用"..."代替。
+代码：slice.py
+6.改变维度
+1)视图变维
+返回包含新维度元数据的数组副本，但实际数据与原数组共享。
+reshape()：只要元素个数为目标维度匹配，不限制目标维度的形式。(24,)->(4,6)->(8,3)-X>(7,3)
+ravel()：任意维度->一维
+2)复制变维
+所返回的数组是一份独立的拷贝，与原数组不共享实际数据。
+flatten()：任意维度->一维
+3)就地变维
+直接修改调用方法的数组对象的维度元数据。
+a.shape = (2, 3)
+a.resize((2, 3))
+4)视图转置
+1 2 3 4   2x4
+5 6 7 8
+| T
+v
+1 5   4x2 
+2 6
+3 7
+4 8
+代码：reshape.py
+7.(同维)数组组合
+1)垂直组合
+numpy.vstack((u, d))
+numpy.concatenate((u, d), axis=0)
+axis命名参数表示轴向，0表示第一维，1表示第二维，以此类推。
+------->1
+| 1 2 3
+| 4 5 6
+| 7 8 9
+v
+0
+2)水平组合
+numpy.hstack((l, r))
+numpy.concatenate((l, r), axis=1)
+3)深度组合
+numpy.dstack((l, r))
+代码：stack.py
+8.数组拆分
+numpy.vsplit(数组, 份数) -> (数组片段)
+numpy.hsplit(数组, 份数) -> (数组片段)
+numpy.dsplit(数组, 份数) -> (数组片段)
+代码：split.py
+9.数组的属性
+shape - 维度
+dtype - 元素类型
+ndim - 维数
+size - 元素数
+itemsize - 元素字节数
+nbytes - 数组字节数(不包括元数据)
+T - 转置视图
+real - 实部数组
+imag - 虚部数组
+flat - 扁平迭代器
+代码：attr.py
+三、numpy的通用函数
+1.读取CSV文件
+numpy.loadtxt(
+    filename, # 文件名
+    delimiter, # 分隔符
+    usecols,    # 选择列
+    unpack,    # 是否类型转换
+    detype,     # 目标类型
+    converters # 转换器列表
+)
+代码：candle.py
+2.算数平均值
+样本：S = [s1 s2 ... sn]
+算数平均值：m = (s1+s2...sn)/n
+numpy.mean(样本数组) -> 算数平均值
+代码：mean.py
+3.加权平均值
+样本：S = [s1 s2 ... sn]
+权重：W = [w1 w2 ... wn]
+加权平均值：a = (s1w1+s2w2...snwn)/(w1+w2...wn)
+numpy.average(样本数组, 权重数组) -> 加权平均值
+VWAP - 成交量加权平均价格
+TWAP - 时间加权平均价格
+代码：vwap.py
+4.最大值和最小值
+1)max/min: 最一个数组中的最大/最小元素
+a
+9 7 5
+3 1 8
+6 6 1
+numpy.max(a) -> 9
+numpy.min(a) -> 1
+2)maximum/minimum: 用两个同维数组对应位置的最大/最小元素组成新的数组
+a
+9 7 5
+3 1 8
+6 6 1
+b
+6 1 9
+7 1 7
+4 4 5
+numpy.maximum(a, b) ->
+9 7 9
+7 1 8
+6 6 5
+numpy.minimum(a, b) ->
+6 1 5
+3 1 7
+4 4 1
+3)极差
+numpy.ptp(数组) -> 数组中最大元素与最小元素只差
+代码：max.py、range.py、sprd.py
+5.中位数
+将多个样本按大小排序，居于中间位置的元素即为中位数。
+1 3 5 7 9
+      ^
+  中位数
+1  3  5  7
+     \ /
+      4
+      ^
+  中位数
+(a[(L-1) / 2] + a[L / 2]) / 2
+median = numpy.median(数组)
+6.统计指标
+1)样本：
+S = [s1 s2 ... sn]
+2)均值：
+A = (s1+s2+...+sn)/n
+3)离差：
+D = [d1 d2 ... dn], di=si-A
+4)离差方：
+Q = [q1 q2 ... qn], qi = di^2
+5)方差：
+总体方差：V = (q1+q2+...+qn)/n
+样本方差：V = (q1+q2+...+qn)/(n-1)
+6)标准差(方均根)：
+std = sqrt(V)
+代码：ret.py
+C  = [c1 c2 c3 ... cn-1 cn]
+R  = [     r1 r2  ...         rn-1], ri = ci+1 - ci
+R' = [r'1 r'2 ... r'n-1], r'i = ri / ci
+L  = [l1 l2 l3 ... ln-1 ln], li=logci
+L' = [    l1' l2' ...       ln-1]], li'=li+1 - li
+1000  100
+1         10
+logA-logB=logA/B
+7.条件拣选
+1)条件掩码
+根据某种条件构造布尔型掩码数组，该数组中的True元素所对应的元素将被选中。
+a: [1 2 3 4 5 6 7 8 9]
+b: a % 2 == 0
+    [F T F T F T F T F]
+a[b]: [2 4 6 8]
+2)where-take
+numpy.where(条件) -> 满足条件的元素的下标数组
+numpy.take(数组, 下标数组) -> 数组中下标落在下标数组中的元素
+代码：select.py
+思考：按星期几统计收盘价的平均值。
+星期一：平均价格
+星期二：平均价格
+...
+代码：week.py
+8.轴向扩展
+沿着给定数组的某个轴向将一个针对元素的处理函数应用为针对数组的处理。
+numpy.apply_along_axis(处理函数, 轴向, 参数数组)
+沿着参数数组的特定轴向依次调用处理函数，并将返回值重新组织成数组返回。
+代码：axis.py、sum.py
+9.卷积运算
+numpy.convolve(a, b, 'full') -> c
+a: [1 2 3 4 5]
+b: [6 7 8]
+c: [6  19  40  61  82  67  40]
+numpy.convolve(a, b, 'same') -> [19  40  61  82  67]
+numpy.convolve(a, b, 'valid')->[40  61  82]
+            6  19  40  61  82  67  40
+0    0    1    2    3    4    5    0    0
+8    7    6
+      8    7    6
+            8    7    6
+                  8    7    6
+                        8    7     6
+                              8     7    6
+                                     8    7    6
+代码：conv.py、sma.py
+
+ABCDE
+abcde
+s=a+b+c+d+e
+(Aa+Bb+Cc+Dd+Ee)/(a+b+c+d+e)
+(Aa+Bb+Cc+Dd+Ee)/s
+Aa/s+Bb/s+Cc/s+Dd/s+Ee/s
+[a/s b/s c/s d/s e/s]
+10.线性模型
+1)线性预测
+N = 3
+0 1 2 3 4 5
+a b c d e f g
+                  ?
+A/B/C
+aA+bB+cC=d \
+bA+cB+dC=e  > A B C
+cA+dB+eC=f  /
+g=dA+eB+fC
+/ a b c \     / A \     / d \
+| b c d  | X |  B | = |  e  |
+\ c d e /     \ C /     \  f /
+      a             x           b
+ax=b
+  x=numpy.linalg.lstsq(a,b)
+  b^Tx=g
+代码：line.py
+2)线性拟合
+kx + b = y
+kx1+b=y1
+kx2+b=y2
+...
+kxn+b=yn
+/ x1, 1 \    / k \    / y1 \
+| x2, 1  | X|     | = | y2  |
+| ...       |    \ b /    | ...   |
+\ xn, 1 /                \ yn /
+      a            x          b
+numpy.linalg.lstsq(a, b) -> x
+代码：trend.py
+11.裁剪、压缩和累乘
+numpy.ndarray.clip()方法返回一个裁剪过的数组，原数组中所有比给定最大值大的元素全部被限定为最大值，而所有比给定最小值小的元素全部被限定为最小值。
+numpy.ndarray.compress()方法返回一个根据给定条件筛选后的数组。
+numpy.ndarray.prod()方法返回数组中各元素累乘的结果。
+代码：ndarr.py
+四、numpy的便捷函数
+1.相关性
+1)协方差
+样本集
+a: [a1 a2 ... an]
+b: [b1 b1 ... bn]
+均值
+ave(a) = (a1+a2+...+an)/n
+ave(b) = (b1+b2+...+bn)/n
+离差
+dev(a) = [a1 a2 ... an] - ave(a)
+dev(b) = [b1 b2 ... bn] - ave(b)
+方差(自协方差)
+var(a) = ave(dev(a)dev(a)) = cov(a,a)
+var(b) = ave(dev(b)dev(b)) = cov(b,b)
+标准差
+std(a) = sqrt(var(a))
+std(b) = sqrt(var(b))
+互协方差
+cov(a,b) = ave(dev(a)dev(b))
+cov(b,a) = ave(dev(b)dev(a))
+协方差矩阵
+/                                                                            \
+| cov(a,a)/std(a)std(a)  cov(a,b)/std(a)std(b) |
+| cov(b,a)/std(b)std(a) cov(b,b)/std(b)std(b) |
+\                                                                            /
+主对角线上的值为1，辅对角线上的值相等，又名相关性系数，其正负表示相关性的方向，为正则正相关，为负则负相关，其绝对值大小表示相关性程度，绝对值越大相关程度越高，反之则越低。
+numpy.cov(a,b) -> 协方差矩阵的分子矩阵
+numpy.corrcoef(a,b) -> 协方差矩阵
+代码：corr.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

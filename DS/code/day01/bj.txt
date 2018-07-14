@@ -1,0 +1,165 @@
+第四阶段：人工智能
+数据分析
+机器学习，基于历史预测未来
+       深度学习
+              强化学习
+一、numpy，Numerical Python，数值的Python
+1.科学计算的算法库：解方程、求积分、线性代数；
+2.高性能算法的集大成者；
+3.几乎是所有高级算法库的基础库；
+   scipy  scikits  pandas  matplotlib
+           \       |            |       /
+                     numpy
+4.开源，免费。
+代码：vec.py
+5.数组的通用性和灵活性不及python中的内置容器。
+二、numpy基础
+1.数组对象
+1)numpy中ndarray是一个类，其实例化对象就是数组。
+实际数据：数组元素的真实数据；
+元数据：描述数组的结构、类型等特征的数据。
+凡是通过元数据可以实现的功能，都会避免使用实际数据，借此提高效率。
+1 2 3 4 5 6
+1
+2, 3
+3, 2
+2)numpy数组的元素必须是相同类型(同质)的。
+3)numpy数组的元素可以通过从0开始的下标访问。
+大小n，合理下标范围：0~n-1
+4)可以通过shape/dtype属性访问有关维度和元素类型的元数据。
+5)可以通过以下两种方式创建数组对象：
+numpy.arange()：以数组形式返回一个有序序列。
+numpy.array()：将任意类型的容器转换成数组。
+代码：shape.py
+2.多维数组
+1)numpy.array()函数可以根据给定的容器对象创建与之维度相当的数组对象。所给定的容器可以是列表、元组或者任何类似的容器。
+2)对于N维数组，通过其dtype属性所获得的并非N-1维数组，而是最终数据元素的类型。
+3)对于N维数组，len()函数所返回的仅仅是第一维的大小，而数组中元素的总数需要通过数组对象的size属性获得。
+4)数组的维度和元素的类型可以在对象创建之后进行修改：
+reshape()/astype()，这里所说修改并非就地修改，而是返回副本。
+代码：nd.py
+3.元素索引
+数组对象[...]...[页][行][列]
+数组对象[..., 页, 行, 列]
+代码：index.py
+4.定制类型
+np.array(..., dtype=元素类型)
+np.arange(起始，终止，步长).astype(元素类型)
+代码：dtype.py
+类型字符码
+? - 布尔型(bool/numpy.boolean/numpy.bool_)
+b - byte/numpy.int8
+B - unsigned byte/numpy.uint8
+i - numpy.intXX
+u - numpy.uintXX
+f - numpy.floatXX
+c - numpy.complexXX
+m - numpy.timedelta
+M -  numpy.datetime
+        M[D]，以天为单位
+O - python对象
+U - numpy.str_，UNICODE字符串
+S -  MBCS字符串
+5.切片
+[起始:终止:步长, ...]
+缺省起始：首或尾
+缺省终止：尾后/首前
+缺省步长：1
+如果连续的多个维度切片都用缺省值，可以用"..."代替。
+代码：slice.py
+6.改变维度
+1)视图变维
+返回包含新维度元数据的数组副本，但实际数据与原数组共享。
+reshape()：只要元素个数为目标维度匹配，不限制目标维度的形式。(24,)->(4,6)->(8,3)-X>(7,3)
+ravel()：任意维度->一维
+2)复制变维
+所返回的数组是一份独立的拷贝，与原数组不共享实际数据。
+flatten()：任意维度->一维
+3)就地变维
+直接修改调用方法的数组对象的维度元数据。
+a.shape = (2, 3)
+a.resize((2, 3))
+4)视图转置
+1 2 3 4   2x4
+5 6 7 8
+| T
+v
+1 5   4x2 
+2 6
+3 7
+4 8
+代码：reshape.py
+7.(同维)数组组合
+1)垂直组合
+numpy.vstack((u, d))
+numpy.concatenate((u, d), axis=0)
+axis命名参数表示轴向，0表示第一维，1表示第二维，以此类推。
+------->1
+| 1 2 3
+| 4 5 6
+| 7 8 9
+v
+0
+2)水平组合
+numpy.hstack((l, r))
+numpy.concatenate((l, r), axis=1)
+3)深度组合
+numpy.dstack((l, r))
+代码：stack.py
+8.数组拆分
+numpy.vsplit(数组, 份数) -> (数组片段)
+numpy.hsplit(数组, 份数) -> (数组片段)
+numpy.dsplit(数组, 份数) -> (数组片段)
+代码：split.py
+9.数组的属性
+shape - 维度
+dtype - 元素类型
+ndim - 维数
+size - 元素数
+itemsize - 元素字节数
+nbytes - 数组字节数(不包括元数据)
+T - 转置视图
+real - 实部数组
+imag - 虚部数组
+flat - 扁平迭代器
+代码：attr.py
+三、numpy的通用函数
+numpy.loadtxt(
+    filename, # 文件名
+    delimiter, # 分隔符
+    usecols,    # 选择列
+    unpack,    # 是否类型转换
+    detype,     # 目标类型
+    converters # 转换器列表
+)
+代码：candle.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

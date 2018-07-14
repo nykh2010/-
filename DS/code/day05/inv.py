@@ -1,0 +1,8 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import numpy as np
+A = np.mat('1 2 3; 8 9 4; 7 6 5')
+print(A)
+B = np.linalg.inv(A)
+print(B)
+print(A * B)

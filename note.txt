@@ -1,0 +1,611 @@
+三、基于matplotlib的数据可视化
+
+matplotlib.pyplot提供基于python语言的绘图函数 
+1. 基本图形绘图
+1) 缺省样式
+mp.plot(x,y)
+	代码： Plt1.py
+
+2）设置线形，线宽和颜色
+	代码：plt2.py
+
+3）设置坐标范围
+	设置水平坐标范围：mp.xlim(最小值，最大值)
+	设置垂直坐标范围：mp.ylim(最小值，最大值)
+	代码：plt3.py
+
+4）设置坐标轴刻度标签
+	mp.xticks(刻度标签位置，刻度标签文本)
+	mp.yticks(刻度标签位置，刻度标签文本)
+	代码：plt4.py
+** 希腊字母转义：
+	使用正则表达式
+	r'$-\pi$' ==> -pi
+	r'$-\frac{\pi}{2}' ==> -pi/2。frac代表分数，第一个{}里的数为分子，第二个{}里的数为分母
+
+5）将矩形的坐标轴改成十字坐标轴
+	* 将获取当前坐标轴对象： ax = mp.gca()
+	* 将垂直坐标刻度置于左边框：ax.yaxis.set_ticks_position('left')
+	* 将左边框置于数据坐标原点： ax.spines['left'].set_postion(('data',0))
+	* 将水平坐标刻度置于底边框：ax.xaxis.set_ticks_postition('bottom')
+	* 将底边框置于数据坐标原点：ax.spines['bottom'].set_position(('data',0))
+	* 将右边框与顶边框设置成无色：ax.spines['right'].set_color('none')
+	代码：plt5.py
+
+6) 显示图例
+	mp.plot(..., label=图例文本)
+	mp.legend(loc=图例位置)			#显示图例
+	* mp.legend(loc=('upper','left'))	#左上
+
+7）添加特殊点
+	mp.scatter(点集水平坐标, 点集垂直坐标, s=60, edgecolor='limegreen',facecolor='white',zorder=3)
+	* s为大小
+	* zorder为图像的层，3代表第三层
+	* edgecolor为边框色
+	* facecolor为填充色
+
+8）添加注释
+	mp.annotate(注释文本，xy=被注释点的坐标，xycoords=被注释点的坐标属性，xytext=注释文本的坐标, textcoords=注释文本坐标的属性, fontsize=字体大小，arrowprops=dict(arrowstyle=箭头形状，connectionstyle=箭头连线的风格))
+	* xycoords='data'
+	* textcoords='offset points'	==> 'offset points' 相对坐标; 'data' 绝对坐标
+	* arrowstyle='->'
+	* connectionstyle='arc3, rad=0.2'
+
+2、图形对象
+	mp.figure(图形名，facecolor=背景颜色)
+	创建（新的）或获取（已有的）图形对象，获取成功后的操作均针对获取的图像对象。
+	代码：fig.py
+	* 创建图形对象
+	mp.figure('Figure Object 1', figsize=(4,3), dpi=120, facecolor='lightgray')
+	* 设置标题
+	mp.title('Figure Object 1', fontsize=14)
+	* 设置坐标轴标签
+	mp.xlabel('x'，fontsize=10)
+	mp.ylabel('y', fontsize=10)
+	* 设置刻度标签参数大小
+	mp.tick_params(labelsize=8)
+	* 设置网格线
+	mp.grid(linestyle=':')
+
+3、子坐标图
+	mp.subplot(ABC)
+	A:总行数
+	B：总列数
+	C：图形号（从1开始）
+	* mp.figure('Subplot', facecolor='lightgray')
+	* mp.subplot(231)
+	* mp.xticks(())
+	* mp.yticks(())
+	* mp.text(0.5, 0.5, '1', ha='center', va='center', size=36, alpha=0.5)
+	* mp.tight_layout()	==> 让排列更好
+	代码：sub1.py
+
+4、栅格布局
+	* 导入模块：import matplotlib.gridspec as mg
+	* 获取栅格对象：gs=mg.GridSpec(行数，列数)
+	* mp.subplot(gs[0,0]) ==> 第0行，第0列作为一个子坐标图
+	* mp.subplot(gs[0,:1]) ==> 第0行，第0、1列作为一个子坐标图
+
+5、自由布局
+	mp.axes([左，底，宽，高])
+	* 4个参数都是比例值
+		到左边框，到底边框的距离，图形的宽度和高度
+		代码：sub3.py
+	* 可实现嵌套效果
+
+6、刻度定位器
+	ax = mp.gca()		==> 获取当前坐标轴的对象
+	ax.xaxis...
+	ax.yaxis...
+	set_major_locator():	设置主刻度定位器
+	set_minor_locator():	设置次刻度定位器
+	代码：tick.py
+	参数：
+	* NullLocator()		==> 不做刻度标记
+	* MaxNLocator()		==> 指定最多刻度数
+	* FixedLocator()	==> 由参数指定刻度数
+	* AutoLocator()		==> 默认的，自动选择最合理的刻度
+	* IndexLocator()	==> 根据偏移和增量定位刻度
+	* MultipleLocator()	==> 根据指定的距离定位刻度
+	* LinearLocator()	==> 根据指定的总刻度数定位刻度
+	* LogLocator()		==> 根据指定的底数和指数定位刻度
+	例子：
+	* 获取图形对象
+		mp.figure('Locator')
+		locators=['mp.NullLocator()',
+		    'mp.MaxNLocator(nbins=3,steps=[3,5,7,9])',
+		    'mp.FixedLocator(locs=[0,2.5,5,7.5,10])',
+		    'mp.AutoLocator()',
+		    'mp.IndexLocator(offset=0.5,base=1.5)',
+		    'mp.MultipleLocator()',
+		    'mp.LinearLocator(numticks=21)',
+		    'mp.LogLocator(base=2,subs=[1.0])']
+	* 绘制图形：
+		n_locators = len(locators)
+		mp.subplot(n_locators, 1, i+1)
+		mp.xlim(0,10)
+		mp.ylim(-1,1)
+		mp.yticks()
+		ax = mp.gca()
+		ax.spines['left'].set_color('none')
+		ax.spines['right'].set_color('none')
+		ax.spines['top'].set_color('none')
+		ax.spines['bottom'].set_position(('data',0))
+		ax.xaxis.set_major_locator(eval(locator))
+		ax.xaxis.set_minor_locator(mp.MultipleLocator(0.1))
+		mp.plot(np.arange(11),np.zeros(11))		==> 贴着x轴画一条线，作为LogLocator的渐近线
+		mp.text(5,0.3,locator[3:],ha='center',size=10)		# 
+
+		mp.tight_layout()		# 紧凑类型排列
+		mp.show()				# 显示
+
+7、散点图
+	* 正态分布的随机数
+		x = np.random.normal(0,1,n)
+		y = np.random.normal(0,1,n)
+	* 计算到原点的距离
+		d = np.sqrt(x**2 + y**2)
+	* 创建图形对象
+		mp.figure('Scatter', facecolor='lightgray')		#创建图形对象
+		mp.title('scatter',fontsize=20)					#对象标题
+		mp.xlable('x',fontsize=14)
+		mp.ylable('y',fontsize=14)
+		mp.tick_params(labelsize=10)
+		mp.grid(linestyle=':')
+		mp.scatter(x,y,s=60,c=d,cmap='jet_r',alpha=0.5)		#创建 
+
+8、区域填充
+	mp.fill_between(填充区域水平坐标, 下限垂直坐标, 上限垂直坐标, where=条件表达式)
+	* x = np.linspace(0, 8*np.pi, n)	#创建等差数列
+	* 准备工作
+		mp.figure('Fill', facecolor='lightgray')
+		mp.title('Fill', fontsize=20)
+		mp.xlabel('x', fontsize=14)
+		mp.ylabel('y', fontsize=14)
+		mp.tick_params(labelsize=10)
+		mp.grid(linestyle=':')
+	* 把正弦余弦两条曲线画出
+		mp.plot(x, sin_y, c='dodgerblue', label=r'$y=sin(x)$')
+		mp.plot(x, cos_y, c='orangered', lable=r'$\frac{1}{2}cos(\frac{x}{2}$')
+	* 填充颜色
+		mp.fill_between(x, cos_y, sin_y, where=cos_y<sin_y, color='dodgerblue', alpha=0.5)
+		mp.fill_between(x, cos_y, sin_y, where=cos_y>sin_y, color='orangered', alpha=0.5)
+
+9、柱状图
+	mp.bar(水平坐标数组, 高度数组, 宽度比例, ec=勾边色, fc=填充色, label=图例标签)
+	* 高度可以为负，即在水平轴下画
+	* 准备工作
+		n = 12
+		x = np.arange(n)
+		y1 = (1-x/n)*np.random.uniform(0.5,1.0,n)
+		y2 = (1-x/n)*np.random.uniform(0.5,1.0,n)
+	* 创建图形对象
+		mp.figure('Bar', facecolor='lightgray')
+		mp.title('Bar',fontsize=20)
+		mp.xlabel() ...
+		mp.ylabel() ...
+		mp.xticks(x, x+1)
+		mp.tick_params(labelsize=10)
+		mp.grid(axis='y',linestyle=':')
+	* 生成柱状图
+		mp.bar(x,y1,0.9,ec='white',fc='dodgerblue',label='Sample1')
+		mp.bar(x,-y2,0.9,ec='white',fc='dodgerblue',alpha=0.5,label='Sample2')
+	* 显示每条柱子的值
+		for _x, _y in zip(x,y1):		# zip将可迭代对象打打包为一个元组，将元组作为列表的一个元素
+			mp.text(_x,_y,'%.2f' % _y, ha='center', va='bottom', size=8)
+
+10、等高线图
+	mp.contourf(x, y, z, 等高线条数, cmap=颜色映射)		# 填充颜色
+	mp.contour(x, y, z, 等高线条数, colors=颜色, linewidh=线宽)		# 不填颜色，画线
+	代码：cntr.py
+	* 准备工作
+		n = 1000		# 做1000*1000r 点阵
+	* 用 meshgrid 生成一个二维数组
+		x,y = np.meshgrid(np.linspace(-3,3,n), np.linspace(-3,3,n))
+	* 生成数
+		z = ...
+	* 画图
+		mp.figure(...)		# 画图准备工作
+		...
+		mp.contourf(x,y,z,8,cmp='jet')		# 填充
+		cntr = mp.contour(x,y,z,8,colors='black', linewidth=0.5)	# 画线
+		mp.clable(cntr, inline_spacing=1, fmt='%.1f', fontsize=8)		# 等高线上标注数值. inline_spacing为数字与线之间的空白
+
+11、热图		# 可以用来比较两个矩阵的相似程度
+	mp.imshow(z, cmap=颜色映射, origin=垂直轴向)
+	代码：hot.py
+	* 准备工作同上
+	* 画图
+		mp.imshow(z, cmap='jet', origin='low')
+	* 设置标签
+		mp.colorbar().set_label('z',fontsize=14)
+
+12、饼图
+	mp.pie(值数组, 间隙数组, 标签数组, 颜色数组, 标注格式, shadow=是否绘制阴影, startangle=起始角度)
+	代码：pie.py
+	* 数据准备
+		values = [26,17,21,29,11]		# 值数组 
+		spaces = [0.05,0.01,0.01,0.01,0.01]		# 间隙数组
+		
+13、三维曲面图
+
+14、三维线框图
+	ax = mp.gca(projection='3d')
+	ax.plot_wireframe(x,y,z,rstride=行步距,cstride=列步距,color=线框颜色)
+	代码：wf.py
+
+15、动画
+	anim = FuncAnimation(图形对象，绘制函数，interval=时间间隔ms)
+	* 调用该函数，matplotlib库会在每间隔interval时间后调用里面的绘制函数，程序编写者只需要实现每帧画面的绘制操作即可。
+	* 如果不用变量名去接收函数的返回，那么函数里的变量为临时变量，接收返回之后生命周期变长，变成进程级的生命周期
+	代码：bub.py
+
+	anim = FuncAnimation(图形对象，绘制函数 ，生成器函数，interval=时间间隔ms)
+	* 函数处理逻辑，利用yield完成数据的收集，使用绘制函数完成数据显示
+	for data in 生成器函数():
+		绘制函数(data)
+		延时interval
+		...
+	代码：sig.py
+
+16、坐标线
+	ax = mp.gca()
+	ax.grid(which='major'/'minor', axis='x'/'y'/'both', linewidth=线宽, linestyle=线型, )
+
+17、对数坐标
+	mp.semilogy		# 参与与mp.plot完全一样。半对数坐标，仅仅y轴取对数
+	代码：log.py
+
+四、numpy的通用函数
+1、读取csv文件
+列数组元组 = np.loadtxt(
+	文件路径, 
+	delimiter=分隔符字符串, 
+	usecols=选择列的元组, 
+	unpack=是否类型转换, 如果设置为False，则按默认方法转换，一般是字符串类型
+	dtype=目标类型列表，
+	converters=转换器字典)
+	* 转换器字典的键是列号，值是转换函数
+	代码：k.py
+
+2、算术平均值
+	样本S：[s1, s2, ..., sn]
+	算术平均值m: m=(s1+s2+...+sn)/n
+
+3、加权平均值（考虑到不同样本对真值的差异性）
+	样本S：[s1, s2, ..., sn]
+	权重W：[w1, w2, ..., wn]
+	加权平均值a=(s1w1+s2w2+...+snwn)/(w1+w2+...+wn)
+	* numpy.average(样本数组, weights=权重数组)
+	实例：计算VWAP(Volume Weighted Average Price, 成交量加权平均价格)
+	代码：vwap.py
+	实例：计算TWAP(Time Weighted Average Price, 时间加权平均价格)
+	代码：twap.py
+
+4、最大值，最小值和极差
+	1、max/min：在一个数组的各个元素中寻找最大和最小元素
+		a:
+		9 7 5
+		3 1 8
+		6 6 1
+		a.max() -> 9
+		a.min() -> 1
+	2、maximum/minimum：在两个数组之间组织对应位置最大值和最小值的集合数组。参数必需是二元的
+		a:
+		9 7 5
+		3 1 8
+		6 6 1
+		b:
+		6 1 9
+		7 1 7
+		4 4 5
+		np.maximum(a,b) ->
+		9 7 9
+		7 1 8
+		6 6 5
+	3、ptp：最大值与最小值之差
+	* 实例：
+		价格范围和价格幅度。
+		价格范围：在一定时期内最高的最高价和最低的最低价之差
+		价格幅度：在一定时期内最高价的极差与最低价的极差。
+
+5、中位数（样本中可能会有个别样本明显偏离均值，中位数可以排除这些个别样本的干扰）
+	将多个样本排序，排序以后位于中间位置的元素称为中位数。（必须先排序）
+	奇数序列的中位数为排序后的中间数，偶数序列的中位数为中间两数的算术平均值
+	A：序列
+	L：序列长度，元素个数
+	M = (A[int((L-1)/2)] + A[int(L/2)]) / 2
+	奇数序列偶数序列都可以用这个公式算中位数
+
+	* np.median（有序或无序都可以）
+	代码：med.py
+
+6、标准差
+	样本：S = [S1,S2,S3,...,Sn]
+	均值：M = (S1+S2+...Sn)/n
+	离差：D = [D1, D2, ..., Dn], Di=Si-M
+	离差方：Q = [Q1,Q2,..., Qn], Qi=Di^2		# 保证函数连续
+	（总体）方差：V = (Q1+Q2+...+Qn)/n
+	（总体）标准差：s = sqrt(V)			# 保证数量级一致
+	（样本）方差：v = (Q1+Q2+...+Qn)/(n-1)
+	（样本）标准差：s = sqrt(v)	
+	* np.std(样本数组) -> 标准差
+	代码：std.py
+
+7、星期数据
+	1、通过date.weekday()方法可以获得用 0 到 6 表示的星期一到星期日，将文本形式的星期量化为数字
+	2、根据给定的条件，从数组中拣选满足该条件的元素：
+		1、被拣选数据[条件表达式]
+		2、被拣选数组[np.where(条件表达式)]
+		3、np.take(被拣选数组, np.where(条件表达式))
+		代码：week.py
+	3、轴向扩展：把一个标量化的操作变成一个矢量化的操作
+	def fun(标量1, 标量2, 标量3):
+		...
+		return 标量4
+	np.apply_along_axis(fun, 轴向0/1/2..., 矢量1, 矢量2, 矢量3) -> 矢量4
+	# 二维数组中0代表行，1代表列
+	代码：axis.py
+
+8、卷积运算
+	1、移动均线（MA，Moving Average）
+	2、数组卷积：np.convolve(被卷积数组，卷积核数组, 卷积类型)
+		a:[1 2 3 4 5]
+		b:[6 7 8]		# 卷积运算时，是用 b 的逆序列运算
+		c = np.convolve(a, b, 'full')		# 完全卷积 [6 19 40 61 82 67 40]
+		c = np.convolve(a, b, 'same')		# 同维度卷积 [19 40 61 82 67]
+		c = np.convolve(a, b, 'valid')		# 有效卷积（不需要补0）[40 61 82]
+		代码：conv.py
+		代码：ma.py
+
+9、线性模型
+	最小二乘法，做预测
+	1、线性预测，有一定的置信区间
+		* 已知前6天的股价预测第7天的股价。
+		* a b c d e f ? （前6天的股价）
+		* N = 3（时间窗口）
+		* A B C (传递参数)
+		aA + bB + cC = d
+		bA + cB + dC = e
+		cA + dB + eC = f
+		* 三个方程联立求解即可以求出A B C的值。
+		* 将上述方程换成矩阵形式：
+			/ a b c \     / A \     /   \
+			| b c d |  x  | B |  =  | e |
+			\ c d e /     \ C /     \   /
+			    a      x    x    =    b
+
+	    代码：line.py
+	2、线性拟合
+		求一条线，让样本的各点到这条线距离的平方和最小。
+		代码：trend.py
+
+10、裁剪、压缩和累乘
+	* numpy.ndarray.clip	# 裁剪，将最大值和最小值设定在给定范围里 削峰，切谷
+		numpy.ndarray.clip(最小值, 最大值)
+	* numpy.ndarray.compress 	# 输出满足条件的数组，将满足条件的数组成新数组
+		numpy.ndarray.compress(条件)
+	* numpy.ndarray.prod	# 返回所有元素的乘积
+		numpy.ndarray.prod()
+	代码：ccp.py
+
+11、相关性矩阵
+	* 随机样本
+		a:[a1,a2,...,an]
+		b:[b1,b2,...,bn]
+		平均值：
+			ave(a) = (a1+a2+...+an)/n
+			ave(b) = (b1+b2+...+bn)/n
+		离差：
+			dev(a) = [a1,a2,...,an] - ave(a)
+			dev(b) = [b1,b2,...,bn] - ave(b)
+		方差：
+			var(a) = ave(dev(a)dev(a))
+			var(b) = ave(dev(b)dev(b))
+		标准差：
+			std(a) = sqrt(var(a))
+			std(b) = sqrt(var(b))
+		协方差：
+			cov(a,a) = ave(dev(a)dev(a))		自相关
+			cov(b,b) = ave(dev(b)dev(b))		自相关
+			cov(a,b) = ave(dev(a)dev(b))		互相关
+			cov(b,a) = ave(dev(b)dev(a))		互相关
+			* 正负代表相关性的方向，大小代表相关性的强弱
+
+			/ cov(a,a)/std(a)std(a)  cov(a,b)/std(a)std(b) \
+			\ cov(b,a)/std(a)std(b)  cov(b,b)/std(b)std(b) /
+			=
+			/ 1 					cov(a,b)/std(a)std(b) \
+			\ cov(b,a)/std(a)std(b) 1 					  /
+			辅对角线上的两个相等的元素，称为相关性系统，[-1,1]
+		* 相关性系数是一个介于-1到1闭区间的标量值，它反映了两个随机信号的相关性，其绝对值接近于1，相关性越强，反之越接近于0，相关性越弱，其正负值表示相关性的方向，正表示正相关，负表示负相关
+		* numpy.corrcoef(a,b) -> 相关性矩阵
+		代码：corr.py
+
+12、多项式拟合
+	f(x) = p0x^n + p1x^n-1 +...+ pn
+	* polyfit(样本的输入特征, 与每个输入特征对应的输出特征, n次) -> [p0, p1, ..., pn]
+	* polyval([p0, p1, ..., pn], 样本输入特征)  -> 输出特征
+	* polyder([p0, p1, ..., pn])  -> 原函数的导函数
+	* roots([p0, p1, ..., pn]) -> 方程： p0x^n + p1x^n-1 +...+ pn = 0的根
+	代码：poly.py
+
+13、符号数组 
+	[10, -12, 7, 4, -8, 6, -2, 0]  ->  [1, -1, 1, 1, -1, 1, -1, 0]
+	* np.sign([输入数组]) -> [输出数组]
+	* np.piecewise(数组, [条件列表], [取值列表])
+		np.piecewise(diff_closing_prices, [diff_closeing_prices<0, diff_closing_prices=0,diff_closing_prices>0],[-1,0,1])
+	代码：obv.py
+
+14、矢量化
+	def 标量函数(参数)
+		...
+		return 返回值
+	矢量函数 = np.vectorize(标量函数)
+	数组 = 矢量函数(数组)
+	代码：vec.py
+
+15、数据平滑
+	随机采样 -> 卷积平滑(卷积降噪) -> 曲线拟合 -> 特征点
+	代码：smr.py
+
+五、矩阵与通用函数
+	1、矩阵
+		* numpy.matrix <- numpy.ndarray
+		* numpy.matrix(二维同质容器, copy=False)
+			copy-是否共享数据元素
+		* numpy.matrix('1 2 3; 4 5 6; 7 8 9')
+		* numpy.mat(二维同质容器/字符串)，等价于copy=False的matrix函数
+			A = numpy.mat(...)
+			B = ...
+			C = ...
+			D = ...
+		* numpy.bmat('A B; C D')
+		* matrix类继承了其基类ndarray中的绝大部分属性和方法，但在个别操作符的重载实现上略有区别：
+			ndarray的 '*' 运算符是对应元素相乘，而matrix的 'x' 为矩阵相乘
+		* matrix在ndarray上增加了一些属性：
+			I属性：逆矩阵
+		代码：mat.py
+
+	2、通用函数
+		* 通用函数(universal function, ufunc)，是numpy.ufunc类型的对象，虽然不是一个函数，但可被当作函数来调用。通用函数内部封装了一个函数(func)，及其参数个数(nin)和返回值的个数(nout)。用nin个数组作为参数调用通用函数，通用函数将从这些数组中依次提取每一个元素，调用被封装的func函数。将其返回的nout个返回值重新组织成nout个数组，返回给通用函数的调用者。
+		代码：ufunc.py
+		* 加法通用函数(add)
+			reduce: 元素相加求和，降维
+			accumulate：记录元素相加求和的过程
+			reduceat：元素分组求和
+			outer：求外和
+			代码：add.py
+		* 除法通用函数
+			1、真除：计算结果一定是浮点数，保留足够多的小数
+				[5 5 -5 -5] <真除> [2 -2 2 -2] = [2.5 -2.5 -2.5 2.5]
+				三种表现形式：
+					numpy.true_divide
+					numpy.divide
+					/
+			2、地板除
+				计算结果的类型与运算数保持一致，不保留小数，向下取整。
+				[5 5 -5 -5] <地板除> [2 -2 2 -2] = [2 -3 -3 2]
+				表现形式：
+					numpy.floor_divide
+					//
+			3、天花板除：计算结果的类型与运算数保持一致，不保留小数，向上取整。
+				[5 5 -5 -5] <天花板除> [2 -2 2 -2] = [3 -2 -2 3]
+				表现形式：
+					没有具体的通用函数实现，可以通过真除，然后再按天花板取整。np.ceil(a/b)
+			4、截断除：计算结果的类型与运算数保持一致，不保留小数，直接舍弃小数部分，取整
+				[5 5 -5 -5] <截断除> [2 -2 2 -2] = [2 -2 -2 2]
+			5、取余数通用函数
+				被除数 <除以> 除数 = 商...余数。对应不同的除法可以得到不同的余数。
+				* 地板余数：地板除所得到的余数,正负号一定和除数一致
+					[5 5 -5 -5] <地板除> [2 -2 2 -2] = [2 -3 -3 2]...[1 -1 1 -1]
+					表现形式：
+						numpy.remainder()
+						numpy.mod()
+						%
+				* 截断余数：截断除所得到的余数，正负号一定和被除数一致
+					[5 5 -5 -5] <截断除> [2 -2 2 -2] = [2 -2 -2 2]...[1 1 -1 -1]
+					表现形式：
+						numpy.fmod()
+				代码：div.py
+			6、numpy中对所有的python运算符提供了针对ndarray/matrix类型对象的重载，通过通用函数实现矢量之间的算数运算
+					F	/ 1 1 \/ 1 1 \
+						\ 1 0 /\ 1 0 / ...				
+				/ 1 1 \ / 2 1 \/ 3 2 \
+				\ 1 0 / \ 1 1 /\ 2 1 / ...
+					1		2      3   ... n-1
+				* 通项公式：
+					fn = ((1+sqrt(5))/2)^n - ((1-sqrt(5))/2)^n)/(sqrt(5))
+				* 临项值
+				lim fn/fn-1 = x
+				代码：fibo.py
+			7、numpy中的三角函数都是通用函数，都可以用于对数组中的元素求三角函数值。
+				x = A sin(at + pi/2)
+				y = B sin(bt)
+				代码：lissa.py
+				4sin(x)   4sin(3x)   4sin(5x)       4sin((2k-1)x)
+				------- + -------- + -------- +...+ ---------
+				   pi        3pi        5pi         (2k-1)*pi
+				代码：squr.py
+			8、位运算通用函数
+				1、按位异或
+					* ^
+					* __xor__
+					* bitwise_xor
+					同0异1
+					if a^b < 0:
+						a、b一定异号
+					代码：bit.py
+				2、位与
+					* &
+					* __and__
+					* bitwise_and
+					if a & (a-1) == 0:
+						a 一定是2的幂
+					代码：bit.py
+				3、左移位
+					* <<
+					* __lshift__
+					* left_shift
+				4、右移位
+					* >>
+					* __rshift__
+					* right_shift
+
+六、numpy的子模块
+	1、线性代数子模块(linalg)
+		1、inv：求逆矩阵
+			在线性代数中，矩阵A与其逆矩阵A^-1的乘积是一个单位矩阵I。
+			** 仅可用于方阵
+		代码：inv.py
+		2、solve：解线性方程组的解
+			x - 2y + z = 0
+			2y - 8z - 8 = 0
+			-4x + 5y + 9z + 9 = 0
+		代码：solve.py
+		3、特征值和特征向量
+			对于 n 阶方阵 A，如果存在数 a 和非零 n 维度列向量 x，使得 Ax = ax 成立，则称 a 是矩阵 A 的特征值，x 是矩阵 A 属于特征值 a 的特征向量。
+			* numpy.linalg.eig(A) -> tuple(特征值数组, 特征向量矩阵)
+				特征向量矩阵的每一列对应特征值数组的每一个元素。
+			代码：eig.py
+		4、奇异值分解
+			将一个矩阵分解为三个矩阵的乘积，M = USV，其中U和V都是正交矩阵，即UU^T = VV^T = I。S称为M的奇异值矩阵。返回的S只有主对角线上存在非零元素，其它元素为0
+			* U, S, V = numpy.linalg.svd(M)
+			S = numpy.diag(sigma)
+			代码：svd.py
+			作用：将多个特征值进行降维处理。
+		5、计算行列式
+			| a b |
+			| c d | = ad - bc
+			| a b c |
+			| d e f | = a | e f | - b | d f | + c | d e |
+			| g h i |     | h i |     | g i |     | g h |
+			          = a(ei-fh) - b(di-fg) + c(dh-eg)
+			* numpy.linalg.det(矩阵) -> 矩阵的行列式的值  # 必需是方阵
+			代码：det.py
+		6、广义逆矩阵
+			将逆矩阵的定义由方阵推广到一般阵：AB=I
+			A      B       =     I
+			(3X4)  (4X3)         (3X3)
+			numpy.pinv(A) -> B
+			代码：pinv.py
+	2、快速傅里叶变换子模块(FFT)
+		代码：fft.py
+
+** 补充：
+* 边缘概率P(A)
+	仅与单个随机变量有关的概率
+
+* 联合概念P(A,B)
+	包含多个条件，且所有条件同时成立的概率
+
+* 条件概率P(A|B)
+	B条件下事件A的概率（此时B作为分母）
+
+* np.nan代表无效值，
+	np.isnan() 是否为无效值
+
+* mp.axhline(y=profits.mean(),linestyle='--',c='gray')  # 画出一条水平线，值为均值
+* 股票价格卷积意义：去除市场情绪影响，还原本质。
+* np.hanning(N)： 窗函数，余弦函数上取了N个点。 以汉明窗作权值进行卷积的物理意义？
+* np.polysub(a,b)： 两个多项式方程相减所得到的数组
